@@ -17,17 +17,21 @@ def is_prime( num ):
 	return True
 	
 def get_primes( num ):
-	primes = []
-	
-	for value in range(0,num):
+	for value in range(num,999999999):
 		if is_prime(value):
-			primes.append(value)
-			
-	return primes
+			yield value
 	
 def sum_primes():
-	return 0
+
+	sum = 0
+
+	for val in get_primes(0):
+		if (val >= 1999999999):
+			break
+		sum += val		
+		
+	return sum
+		
     
 #main
-print(is_prime(4))
-print(get_primes(100))
+print(sum_primes())
