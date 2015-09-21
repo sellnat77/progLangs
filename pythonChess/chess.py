@@ -59,6 +59,13 @@ def moves_function(unit):
 		pawn : moves_pawn	
 	}.get(unit,moves_pawn)
 
+def player_pieces(board,player):
+	#generator
+	
+def possible_moves(board, player):
+	#use player pieces
+	
+
 
 
 
