@@ -15,11 +15,11 @@ def init_board():
 	for row in range(boardSize):
 		for col in range(boardSize):
 			if row < 2:
-				currBoard[row][col] = (king,boardCols[row],boardRows[col],playerOne)
+				currBoard[row][col] = (queen,boardCols[row],boardRows[col],playerOne)
 			elif row > 5:
-				currBoard[row][col] = (king,boardCols[row],boardRows[col],playerTwo)
+				currBoard[row][col] = (queen,boardCols[row],boardRows[col],playerTwo)
 			else:
-				currBoard[row][col] = (king,boardCols[row],boardRows[col],'E')
+				currBoard[row][col] = (queen,boardCols[row],boardRows[col],'E')
 
 
 def print_board():
@@ -57,10 +57,31 @@ def moves_king(board,player,tup):
 	
 def moves_queen(board,player,tup):
 	row, col = tup
+	allMoves = []
 	
 	#if same team
 	#if enemy piece
-	
+	for j in range(0,boardSize):
+		#check fwd
+		if check_move(board,(row+j,col),player):
+			allMoves.append((row+j,col))
+		#check bckwd
+		if check_move(board,(row-j,col),player):
+			allMoves.append((row-j,col))
+		#check diag rt fwd
+		if check_move(board,(row+j,col+j),player):
+			allMoves.append((row+j,col+j))
+		#check diag lt fwd
+		if check_move(board,(row+j,col-j),player):
+			allMoves.append((row+j,col-j))
+		#check diag rt bckwd
+		if check_move(board,(row-j,col+j),player):
+			allMoves.append((row-j,col+j))
+		#check diag lt bckwd
+		if check_move(board,(row-j,col-j),player):
+			allMoves.append((row-j,col-j))
+			
+	return allMoves
 	
 	
 def moves_knight(board,player,tup):	
@@ -151,11 +172,11 @@ def check_move(board, location, player):
 		return False
 	if row > 7 or row < 0:
 		return False
-	print (board[row][col])	
+	#print (board[row][col])	
 	unit,dcol,drow,occuPlayer = board[row][col]	
-	print("Trying to ",row,col)
+	#print("Trying to ",row,col)
 	
-	print(occuPlayer,"--",player)
+	#print(occuPlayer,"--",player)
 	
 	if occuPlayer == 'E' or occuPlayer != player:
 		return True
