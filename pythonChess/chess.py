@@ -34,13 +34,21 @@ def print_board():
 def moves_king(board,player,tup):
 	col, row = tup
 	
+	#if same team
+	#if enemy piece
 	
 	
 def moves_queen(board,player,tup):
 	col, row = tup
 	
+	#if same team
+	#if enemy piece
+	
 def moves_knight(board,player,tup):	
 	col, row = tup
+	
+	#if same team
+	#if enemy piece
 
 def moves_pawn(board,player,tup):
 	allMoves = []
@@ -69,8 +77,14 @@ def moves_pawn(board,player,tup):
 def moves_rook(board,player,tup):
 	col, row = tup
 	
+	#if same team
+	#if enemy piece
+	
 def moves_bishop(board,player,tup):
 	col, row = tup
+	
+	#if same team
+	#if enemy piece
 	
 def moves_function(unit):
 	return{
