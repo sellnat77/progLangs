@@ -15,11 +15,11 @@ def init_board():
 	for row in range(boardSize):
 		for col in range(boardSize):
 			if row < 2:
-				currBoard[row][col] = (pawn,boardCols[col],boardRows[row],playerOne)
+				currBoard[row][col] = (king,boardCols[row],boardRows[col],playerOne)
 			elif row > 5:
-				currBoard[row][col] = (pawn,boardCols[col],boardRows[row],playerTwo)
+				currBoard[row][col] = (king,boardCols[row],boardRows[col],playerTwo)
 			else:
-				currBoard[row][col] = (pawn,boardCols[col],boardRows[row],'E')
+				currBoard[row][col] = (king,boardCols[row],boardRows[col],'E')
 
 
 def print_board():
@@ -32,33 +32,52 @@ def print_board():
 			count += 1
 
 def moves_king(board,player,tup):
-	col, row = tup
+	row, col = tup
+	allMoves = []
+	
 	
 	#if same team
 	#if enemy piece
+	
+	#determine player
+		#can move up,down,left,right
+	
+	if check_move(board,(row,col-1),player):
+		allMoves.append((row,col-1))
+	if check_move(board,(row,col+1),player):
+		allMoves.append((row,col+1))
+	if check_move(board,(row+1,col),player):
+		allMoves.append((row+1,col))
+	if check_move(board,(row-1,col),player):
+		allMoves.append((row-1,col))
+		
+	return allMoves
+	
 	
 	
 def moves_queen(board,player,tup):
-	col, row = tup
+	row, col = tup
 	
 	#if same team
 	#if enemy piece
 	
+	
+	
 def moves_knight(board,player,tup):	
-	col, row = tup
+	row, col = tup
 	
 	#if same team
 	#if enemy piece
 
 def moves_pawn(board,player,tup):
 	allMoves = []
-	col, row = tup
+	row, col = tup
 	
 	#if same piece
 		#if not playerOne
 	#if enemy diagonal
 	#if enemy in front
-		#if (col, row+1).unit is not playerTwo
+		#if (row, col+1).unit is not playerTwo
 	#fwd = (col,row+1),(col,row+1)
 		#Check if not past the board
 		#if col+1 or col -1 is not > 8 or < 0
@@ -66,22 +85,22 @@ def moves_pawn(board,player,tup):
 	
 	if player == playerOne:
 		
-		allMoves.append((col,row+1))
-		allMoves.append((col,row+2))
+		allMoves.append((row,col+1))
+		allMoves.append((row,col+2))
 	else:
-		allMoves.append((col,row-1))
-		allMoves.append((col,row-2))
+		allMoves.append((row,col-1))
+		allMoves.append((row,col-2))
 		
 	return allMoves
 	
 def moves_rook(board,player,tup):
-	col, row = tup
+	row, col = tup
 	
 	#if same team
 	#if enemy piece
 	
 def moves_bishop(board,player,tup):
-	col, row = tup
+	row, col = tup
 	
 	#if same team
 	#if enemy piece
@@ -100,9 +119,9 @@ def player_pieces(board,player):
 	#yields type of piece, pieces coordinates
 	for rw in board:
 		for point in rw:
-			unit, col, row, locPlayer = point
+			unit, row, col, locPlayer = point
 			if player == locPlayer:
-				yield((unit,(col,row)))
+				yield((unit,(row,col)))
 	
 def possible_moves(board, player):
 	count = 1
@@ -120,7 +139,29 @@ def possible_moves(board, player):
 		print("")
 	
 	#use player pieces
-			
+
+def check_move(board, location, player):
+	row, col = location
+	row -= 1
+	col -= 1
+	
+	
+	
+	if col > 7 or col < 0:
+		return False
+	if row > 7 or row < 0:
+		return False
+	print (board[row][col])	
+	unit,dcol,drow,occuPlayer = board[row][col]	
+	print("Trying to ",row,col)
+	
+	print(occuPlayer,"--",player)
+	
+	if occuPlayer == 'E' or occuPlayer != player:
+		return True
+	else:
+		return False
+
 init_board()
 print_board()
 
