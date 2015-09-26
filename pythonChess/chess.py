@@ -90,36 +90,13 @@ def moves_king(board,player,tup):
 	
 	for move in proposedMoves:
 		case = check_move(board,move,player)
-		
-		if case == wall:
-			None
-			#stop this track
 			
-		elif case == emptyCase:
+		if case == emptyCase:
 			allMoves.append(move)
 			
 		elif case == captureEnemy:
 			allMoves.append(move)
-			
-		elif case == sameTeam:
-			None
-			#Stop this track
-		
-	
-	#if same team
-	#if enemy piece
-	
-	#determine player
-		#can move up,down,left,right
-	
-#	if check_move(board,(row,col-1),player):
-#		allMoves.append((row,col-1))
-#	if check_move(board,(row,col+1),player):
-#		allMoves.append((row,col+1))
-#	if check_move(board,(row+1,col),player):
-#		allMoves.append((row+1,col))
-#	if check_move(board,(row-1,col),player):
-#		allMoves.append((row-1,col))
+			badPaths.append(path)
 		
 	return allMoves
 	
@@ -127,35 +104,48 @@ def moves_king(board,player,tup):
 	
 def moves_queen(board,player,tup):
 	row, col = tup
+	
+	iRow = int(row)
+	iCol =int(col)
+	
 	allMoves = []
+	
+	hitTeam = False
+	badPaths = []
+	path = [0,1,2,3,4,5,6,7]
 	
 	proposedMoves = []
 	
-	for j in range(0,boardSize):
-		proposedMoves.append(row+j,col)
-		proposedMoves.append(row-j,col)
-		proposedMoves.append(row,col+j)
-		proposedMoves.append(row,col-j)
-		proposedMoves.append(row+j,col+j)
-		proposedMoves.append(row+j,col-j)
-		proposedMoves.append(row-j,col+j)
-		proposedMoves.append(row-j,col-j)
-		
+	for j in range(1,boardSize):
+		#Storing tracks to throw them out if same team blocking path
+		proposedMoves.append((iRow+j,iCol))
+		proposedMoves.append((iRow-j,iCol))
+		proposedMoves.append((iRow,iCol+j))
+		proposedMoves.append((iRow,iCol-j))
+		proposedMoves.append((iRow+j,iCol+j))
+		proposedMoves.append((iRow+j,iCol-j))
+		proposedMoves.append((iRow-j,iCol+j))
+		proposedMoves.append((iRow-j,iCol-j))
+	
+	k = 0
 	for move in proposedMoves:
-		case = check_move(board,move,player)
+		path = k
+		path %= 8
 		
-		if case == wall:
-			None
-			#stop this track
+		case = check_move(board,move,player)
 			
-		elif case == emptyCase:
+		if case == emptyCase and not path in badPaths:
 			allMoves.append(move)
 			
-		elif case == captureEnemy:
+		elif case == captureEnemy and not path in badPaths:
 			allMoves.append(move)
+			badPaths.append(path)
 			
 		elif case == sameTeam:
-			None
+			badPaths.append(path)
+		k += 1
+			
+			
 			#Stop this track
 	return allMoves
 	
@@ -165,27 +155,32 @@ def moves_knight(board,player,tup):
 	iRow = int(row)
 	iCol =int(col)
 	
+	allMoves = []
+	badPaths = []
+	
 	proposedMoves = [(iRow-2,iCol-1),(iRow-2,iCol+1),(iRow+2,iCol-1),(iRow+2,iCol+1),(iRow-1,iCol+2),(iRow+1,iCol+2),(iRow+1,iCol-2),(iRow-1,iCol-2)]
 	
+	k = 0
+	
 	for move in proposedMoves:
+		path = k % 8
 		case = check_move(board,move,player)
 		
-		if case == wall:
-			None
-			#stop this track
-			
-		elif case == emptyCase:
+		if case == emptyCase and not path in badPaths:
 			allMoves.append(move)
 			
-		elif case == captureEnemy:
+		elif case == captureEnemy and not path in badPaths:
 			allMoves.append(move)
+			badPaths.append(path)
 			
 		elif case == sameTeam:
-			None
+			badPaths.append(path)
 			#Stop this track
+		k += 1
 	
 	#if same team
 	#if enemy piece
+	return allMoves
 
 def moves_pawn(board,player,tup):
 	allMoves = []
@@ -238,14 +233,78 @@ def moves_pawn(board,player,tup):
 def moves_rook(board,player,tup):
 	row, col = tup
 	
+	iRow = int(row)
+	iCol = int(col)
+	allMoves = []
+	badPaths = []
+	proposedMoves = []
+	
+	for j in range(1,boardSize):
+		proposedMoves.append((iRow+j,iCol))
+		proposedMoves.append((iRow-j,iCol))
+		proposedMoves.append((iRow,iCol+j))
+		proposedMoves.append((iRow,iCol-j))
+	
+	k = 0
+	for move in proposedMoves:
+		print("TRYING: ",move)
+		
+		path = k % 4
+		print("PATH: ",path)
+		case = check_move(board,move,player)
+		
+		if case == emptyCase and not path in badPaths:
+			allMoves.append(move)
+			
+		elif case == captureEnemy and not path in badPaths:
+			allMoves.append(move)
+			badPaths.append(path)
+			
+		elif case == sameTeam:
+			badPaths.append(path)
+			#Stop this track
+		k += 1
 	#if same team
 	#if enemy piece
+	return allMoves
 	
 def moves_bishop(board,player,tup):
 	row, col = tup
 	
+	iRow = int(row)
+	iCol = int(col)
+	allMoves = []
+	badPaths = []
+	
+	proposedMoves = []
+	
+	for j in range(1,boardSize):
+		proposedMoves.append((iRow+j,iCol+j))
+		proposedMoves.append((iRow-j,iCol-j))
+		proposedMoves.append((iRow-j,iCol+j))
+		proposedMoves.append((iRow+j,iCol-j))
+	
+	k = 0
+	for move in proposedMoves:
+		path = k % 4
+		
+		case = check_move(board,move,player)
+		
+		if case == emptyCase and not path in badPaths:
+			allMoves.append(move)
+			
+		elif case == captureEnemy and not path in badPaths:
+			allMoves.append(move)
+			badPaths.append(path)
+			
+		elif case == sameTeam:
+			badPaths.append(path)
+			#Stop this track
+		k+=1
+	
 	#if same team
 	#if enemy piece
+	return allMoves
 	
 def moves_function(unit):
 	return{
@@ -303,7 +362,8 @@ def check_move(board, location, player):
 		return emptyCase
 	elif occuPlayer != player:
 		return captureEnemy
-	else:
+	elif occuPlayer == player:
+		print("SAME TEAM")
 		return sameTeam
 
 read_board("board2.csv")
