@@ -1,6 +1,5 @@
 import os
 import csv
-import sys 
 
 boardSize = 8
 boardRows = [1,2,3,4,5,6,7,8]
@@ -29,7 +28,6 @@ def write_board(board):
 		tempList.clear()
 		for loc in point:
 			tempList.append("{0}|{1},{2}|{3}".format(loc[0], loc[1], loc[2], loc[3]))
-		print ("\t".join(tempList))
 		writer.writerows([tempList])
 
 def read_board(boardFile):
@@ -41,14 +39,9 @@ def read_board(boardFile):
 	for row in reader:
 		if row:
 			tCol = 0
-			print("ROW:",row,"indx",tRow)
 			for cell in row:
-				print("CELL:",cell,"indx",tCol)
 				vals = cell.split("|")
-				#print(cell.split('|'))
-				#print(vals[2])
 				point = vals[1].split(",")
-				#print(point)
 				currBoard[tRow][tCol] = (vals[0],\
 				point[0],\
 				point[1],\
@@ -86,8 +79,7 @@ def moves_king(board,player,tup):
 	iCol = int(col)
 	allMoves = []
 	proposedMoves = [(iRow,iCol-1),(iRow,iCol+1),(iRow+1,iCol),(iRow-1,iCol)]
-	
-	
+		
 	for move in proposedMoves:
 		case = check_move(board,move,player)
 			
@@ -110,14 +102,13 @@ def moves_queen(board,player,tup):
 	
 	allMoves = []
 	
-	hitTeam = False
 	badPaths = []
 	path = [0,1,2,3,4,5,6,7]
 	
 	proposedMoves = []
 	
 	for j in range(1,boardSize):
-		#Storing tracks to throw them out if same team blocking path
+		#Storing tracks to throw them out if same team blocking path or already captured an enemy
 		proposedMoves.append((iRow+j,iCol))
 		proposedMoves.append((iRow-j,iCol))
 		proposedMoves.append((iRow,iCol+j))
@@ -145,8 +136,6 @@ def moves_queen(board,player,tup):
 			badPaths.append(path)
 		k += 1
 			
-			
-			#Stop this track
 	return allMoves
 	
 	
@@ -175,11 +164,8 @@ def moves_knight(board,player,tup):
 			
 		elif case == sameTeam:
 			badPaths.append(path)
-			#Stop this track
 		k += 1
 	
-	#if same team
-	#if enemy piece
 	return allMoves
 
 def moves_pawn(board,player,tup):
@@ -189,45 +175,44 @@ def moves_pawn(board,player,tup):
 	iRow = int(row)
 	iCol = int(col)
 	
-	proposedMoves = [(iRow-1,iCol),(iRow+1,iCol),\
-					 (iRow-2,iCol),(iRow+2,iCol),\
-					 (iRow+1,iCol+1),(iRow-1,iCol+1),\
-					 (iRow+1,iCol-1),(iRow-1,iCol-1)]
-	#if same piece
-		#if not playerOne
-	#if enemy diagonal
-	#if enemy in front
-		#if (row, col+1).unit is not playerTwo
-	#fwd = (col,row+1),(col,row+1)
-		#Check if not past the board
-		#if col+1 or col -1 is not > 8 or < 0
-	#diag = (col+1,row+1),(col-1,row+1)
+	print("BOARD:",board[iRow][iCol])
+	print("ROW",iRow,"COL",iCol)
+	print("FWD  ",board[iRow+1][iCol])
+	print("FwdFWD  ",board[iRow+2][iCol])
+	print("RIGHT  ",board[iRow+1][iCol+1])
+	print("LEFT  ",board[iRow+1][iCol-1])
 	
-	for move in proposedMoves:
-		case = check_move(board,move,player)
+	
+	if player == playerOne:
+		proposedMoves = [(iRow+1,iCol), (iRow+2,iCol)]
+		unit,row,col,lookAheadRt = board[iRow+1][iCol+1]
 		
-		if case == wall:
-			None
-			#stop this track
+		unit,row,col,lookAheadLt = board[iRow+1][iCol-1]
+		if lookAheadRt == playerTwo:
+			print("HIT RIGHT")
+			proposedMoves.append((iRow+1,iCol+1))
+		if lookAheadLt == playerTwo:
+			proposedMoves.append((iRow+1,iCol-1))
+	else:
+		proposedMoves = [(iRow-1,iCol), (iRow-2,iCol)]
+		unit,row,col,lookAheadRt = board[iRow-1][iCol+1]
+		unit,row,col,lookAheadLt = board[iRow-1][iCol-1]
+		if lookAheadRt == playerOne:
+			proposedMoves.append((iRow-1,iCol+1))
+		if lookAheadLt == playerOne:
+			proposedMoves.append((iRow-1,iCol-1))
 			
-		elif case == emptyCase:
+	print("PROPOSED:",proposedMoves)
+	for move in proposedMoves:
+		row, col = move
+		case = check_move((board,move),player)	
+		
+		if case == emptyCase:
 			allMoves.append(move)
 			
 		elif case == captureEnemy:
 			allMoves.append(move)
-			
-		elif case == sameTeam:
-			None
-			#Stop this track
 	
-	#if player == playerOne:
-		
-	#	allMoves.append((row,col+1))
-	#	allMoves.append((row,col+2))
-	#else:
-	#	allMoves.append((row,col-1))
-	#	allMoves.append((row,col-2))
-		
 	return allMoves
 	
 def moves_rook(board,player,tup):
@@ -246,11 +231,8 @@ def moves_rook(board,player,tup):
 		proposedMoves.append((iRow,iCol-j))
 	
 	k = 0
-	for move in proposedMoves:
-		print("TRYING: ",move)
-		
+	for move in proposedMoves:		
 		path = k % 4
-		print("PATH: ",path)
 		case = check_move(board,move,player)
 		
 		if case == emptyCase and not path in badPaths:
@@ -262,10 +244,8 @@ def moves_rook(board,player,tup):
 			
 		elif case == sameTeam:
 			badPaths.append(path)
-			#Stop this track
 		k += 1
-	#if same team
-	#if enemy piece
+	
 	return allMoves
 	
 def moves_bishop(board,player,tup):
@@ -299,11 +279,8 @@ def moves_bishop(board,player,tup):
 			
 		elif case == sameTeam:
 			badPaths.append(path)
-			#Stop this track
 		k+=1
 	
-	#if same team
-	#if enemy piece
 	return allMoves
 	
 def moves_function(unit):
@@ -331,7 +308,12 @@ def possible_moves(board, player):
 		moves = moves_function(piece)
 		
 		print("Moves for player",player,"'s ",piece," at ",location)
+		row, col = location
+		location = (int(row)-1,int(col)-1)
+		
 		for mov in moves(board,player,location):
+			row, col = mov
+			mov = (row+1,col+1)
 			if count % 2 == 0:
 				print("")
 			print("\tHeres a move!",count, end="")
@@ -343,27 +325,18 @@ def possible_moves(board, player):
 
 def check_move(board, location, player):
 	row, col = location
-	row -= 1
-	col -= 1
-	
-	
 	
 	if col < 0 or col > 7:
 		return wall
 	if row < 0 or row > 7:
 		return wall
-	#print (board[row][col])	
 	unit,dcol,drow,occuPlayer = board[row][col]	
-	#print("Trying to ",row,col)
-	
-	#print(occuPlayer,"--",player)
 	
 	if occuPlayer == 'E':
 		return emptyCase
 	elif occuPlayer != player:
 		return captureEnemy
 	elif occuPlayer == player:
-		print("SAME TEAM")
 		return sameTeam
 
 read_board("board2.csv")
@@ -371,8 +344,6 @@ read_board("board2.csv")
 print_board(currBoard)
 
 print("Requesting player 2")
-possible_moves(currBoard,playerTwo)
-print("Requesting player 1")
 possible_moves(currBoard,playerOne)
 
 write_board(currBoard)
