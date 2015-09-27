@@ -3,8 +3,8 @@ import csv
 
 boardSize = 8
 boardRows = [1,2,3,4,5,6,7,8]
-boardCols = [1,2,3,4,5,6,7,8]
-currBoard = [[None for _ in range(8)] for _ in range(8)]
+boardCols = ['A','B','C','D','E','F','G','H']
+currBoard = [[None for x in range(8)] for y in range(8)]
 playerOne = 'P1'
 playerTwo = 'P2'
 king = 'K'
@@ -47,10 +47,7 @@ def read_board(boardFile):
 				point[1],\
 				vals[2])
 				tCol += 1
-			tRow += 1
-	
-	
-		
+			tRow += 1		
 		
 def init_board():
 	for row in range(boardSize):
@@ -68,8 +65,8 @@ def print_board(board):
 	for point in board:
 		for loc in point:
 			if count % 8 == 0:
-				print("LOC:",loc)
-			print("{0}: ( {1},{2} )|{3}\t".format(loc[0], loc[1], loc[2], loc[3]),end="")
+				print("")
+			print("{0}: ( {1},{2} )|{3}\t".format(loc[0], loc[1], boardCols[int(loc[2])-1], loc[3]),end="")
 			count += 1
 
 def moves_king(board,player,tup):
@@ -78,7 +75,8 @@ def moves_king(board,player,tup):
 	iRow = int(row)
 	iCol = int(col)
 	allMoves = []
-	proposedMoves = [(iRow,iCol-1),(iRow,iCol+1),(iRow+1,iCol),(iRow-1,iCol)]
+	proposedMoves = [(iRow,iCol-1),(iRow,iCol+1),(iRow+1,iCol),(iRow-1,iCol),\
+	                 (iRow+1,iCol+1),(iRow+1,iCol-1),(iRow-1,iCol+1),(iRow-1,iCol-1)]
 		
 	for move in proposedMoves:
 		case = check_move(board,move,player)
@@ -107,7 +105,6 @@ def moves_queen(board,player,tup):
 	proposedMoves = []
 	
 	for j in range(1,boardSize):
-		#Storing tracks to throw them out if same team blocking path or already captured an enemy
 		proposedMoves.append((iRow+j,iCol))
 		proposedMoves.append((iRow-j,iCol))
 		proposedMoves.append((iRow,iCol+j))
@@ -299,26 +296,23 @@ def player_pieces(board,player):
 				yield((unit,(row,col)))
 	
 def possible_moves(board, player):
-	count = 1
 	for unit in player_pieces(board,player):
 		piece,location = unit
 		moves = moves_function(piece)
 		
-		print("Moves for player",player,"'s ",piece," at ",location)
+		row,colVal = location
+		locationVal = (row,boardCols[int(colVal)-1])
+		
+		print("Moves for player",player,"'s ",piece," at ",locationVal)
 		row, col = location
 		location = (int(row)-1,int(col)-1)
 		
 		for mov in moves(board,player,location):
 			row, col = mov
-			mov = (row+1,col+1)
-			if count % 2 == 0:
-				print("")
-			print("\tHeres a move!",count, end="")
+			mov = (row+1,boardCols[col])
+			print("\tPossible move: ", end="")
 			print(mov)
-			count += 1
 		print("")
-	
-	#use player pieces
 
 def check_move(board, location, player):
 	row, col = location
@@ -336,11 +330,13 @@ def check_move(board, location, player):
 	elif occuPlayer == player:
 		return sameTeam
 
+		
+#MAIN
 read_board("board2.csv")
-#init_board()
 print_board(currBoard)
 
-print("Requesting player 2")
+print("\nRequesting player 2's possible moves")
 possible_moves(currBoard,playerTwo)
 
-write_board(currBoard)
+print("\nRequesting player 1's possible moves")
+possible_moves(currBoard,playerOne)
