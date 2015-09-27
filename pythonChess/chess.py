@@ -88,7 +88,6 @@ def moves_king(board,player,tup):
 			
 		elif case == captureEnemy:
 			allMoves.append(move)
-			badPaths.append(path)
 		
 	return allMoves
 	
@@ -170,42 +169,40 @@ def moves_knight(board,player,tup):
 
 def moves_pawn(board,player,tup):
 	allMoves = []
+	proposedMoves = []
 	row, col = tup
 	
 	iRow = int(row)
 	iCol = int(col)
 	
-	print("BOARD:",board[iRow][iCol])
-	print("ROW",iRow,"COL",iCol)
-	print("FWD  ",board[iRow+1][iCol])
-	print("FwdFWD  ",board[iRow+2][iCol])
-	print("RIGHT  ",board[iRow+1][iCol+1])
-	print("LEFT  ",board[iRow+1][iCol-1])
-	
-	
-	if player == playerOne:
-		proposedMoves = [(iRow+1,iCol), (iRow+2,iCol)]
+	if row == 1 or row == 6:
+		if player == playerOne:
+			proposedMoves.append((iRow+2,iCol))
+		else:
+			proposedMoves.append((iRow-2,iCol))
+				
+	if player == playerOne and iCol < 7:
+		proposedMoves.append((iRow+1,iCol))
 		unit,row,col,lookAheadRt = board[iRow+1][iCol+1]
 		
 		unit,row,col,lookAheadLt = board[iRow+1][iCol-1]
 		if lookAheadRt == playerTwo:
-			print("HIT RIGHT")
 			proposedMoves.append((iRow+1,iCol+1))
 		if lookAheadLt == playerTwo:
 			proposedMoves.append((iRow+1,iCol-1))
-	else:
-		proposedMoves = [(iRow-1,iCol), (iRow-2,iCol)]
+	
+	elif player == playerTwo and (iCol < 7 or iCol >= 1):
+		proposedMoves.append((iRow-1,iCol))
 		unit,row,col,lookAheadRt = board[iRow-1][iCol+1]
 		unit,row,col,lookAheadLt = board[iRow-1][iCol-1]
 		if lookAheadRt == playerOne:
 			proposedMoves.append((iRow-1,iCol+1))
 		if lookAheadLt == playerOne:
 			proposedMoves.append((iRow-1,iCol-1))
-			
-	print("PROPOSED:",proposedMoves)
+		
 	for move in proposedMoves:
 		row, col = move
-		case = check_move((board,move),player)	
+		case = check_move(board,move,player)	
 		
 		if case == emptyCase:
 			allMoves.append(move)
@@ -344,6 +341,6 @@ read_board("board2.csv")
 print_board(currBoard)
 
 print("Requesting player 2")
-possible_moves(currBoard,playerOne)
+possible_moves(currBoard,playerTwo)
 
 write_board(currBoard)
