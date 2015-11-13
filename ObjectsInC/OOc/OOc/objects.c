@@ -115,7 +115,7 @@ int main()
 		printf("Selected base animal");
 		break;
 	case DOG:
-		dogPtr = malloc(sizeof(struct Dog));
+		dogPtr = malloc(sizeof(struct Animal));
 		printf("Selected dog\n");
 		printf("Enter dog's weight: ");
 		scanf_s("%lf", &weight);
@@ -126,8 +126,6 @@ int main()
 		dogPtr->weight = weight;
 		dogPtr->age = age;
 		myAnimal = &dogPtr;
-		
-
 		break;
 	case CAT:
 		catPtr = malloc(sizeof(struct Cat));
@@ -158,9 +156,9 @@ int main()
 		break;
 	}
 	printf("\n");
-	((void(*)(struct Animal*))myAnimal->v_table[0])(myAnimal);
+	((void(*)(struct Animal*))myAnimal->v_table[0])(&myAnimal);
 	printf("\nYour animal costs %.2lf per month.\n", \
-		((double(*)(struct Animal*))myAnimal->v_table[1])(myAnimal));
+		((double(*)(struct Animal*))myAnimal->v_table[1])(&myAnimal));
 
 
 
