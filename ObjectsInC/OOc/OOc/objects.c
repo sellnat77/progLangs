@@ -1,6 +1,7 @@
 #include<stdio.h>
 
 
+
 struct Animal
 {
 	void **v_table;
@@ -33,17 +34,17 @@ typedef enum { ANIMAL, DOG, CAT, LION } selectedAnimal;
 
 void Speak_Dog(struct Animal *a)
 {
-	printf("Meow! I weigh %.2lf pounds!", ((struct Dog*)a)->weight);
+	printf("\nMeow! I weigh %.2lf pounds!", ((struct Dog*)a)->weight);
 };
 
 void Speak_Cat(struct Animal *a)
 {
-	printf("Woof! I have %d lives!", ((struct Cat*)a)->numberOfLives);
+	printf("\nWoof! I have %d lives!", ((struct Cat*)a)->numberOfLives);
 };
 
 void Speak_Lion(struct Animal *a)
 {
-	printf("ROAR! I weigh %.2lf pounds!", ((struct Lion*)a)->weight);
+	printf("\nROAR! I weigh %.2lf pounds!", ((struct Lion*)a)->weight);
 };
 
 double Get_Cost_Dog(struct Animal *a)
@@ -92,7 +93,7 @@ int main()
 	struct Dog *dogPtr;
 	struct Cat *catPtr;
 	struct Lion *lionPtr;
-	struct Animal *myAnimal = 0;
+	struct Animal *myAnimal = 1;
 	int animalSelection;
 	int age;
 	int numLives;
@@ -114,21 +115,24 @@ int main()
 	case ANIMAL:
 		printf("Selected base animal");
 		break;
+
 	case DOG:
-		dogPtr = malloc(sizeof(struct Animal));
+		myAnimal = malloc(sizeof(struct Dog));
+		//myAnimal = dogPtr;
 		printf("Selected dog\n");
 		printf("Enter dog's weight: ");
 		scanf_s("%lf", &weight);
 		printf("Enter dog's age:");
 		scanf_s("%d", &age);
 		
-		Construct_Dog(&dogPtr);
-		dogPtr->weight = weight;
-		dogPtr->age = age;
-		myAnimal = &dogPtr;
+		Construct_Dog(&myAnimal);
+		((struct Dog*)myAnimal)->weight = weight;
+		((struct Dog*)myAnimal)->age = age;
 		break;
+
 	case CAT:
 		catPtr = malloc(sizeof(struct Cat));
+		myAnimal = &catPtr;
 		printf("Selected cat");
 		printf("Enter cat's number of lives:");
 		scanf_s("%d", &numLives);
@@ -138,10 +142,11 @@ int main()
 		Construct_Cat(&catPtr);
 		catPtr->numberOfLives = numLives;
 		catPtr->age = age;
-		myAnimal = &catPtr;
 		break;
+
 	case LION:
 		lionPtr = malloc(sizeof(struct Lion));
+		myAnimal = &lionPtr;
 		printf("Selected lion");
 		scanf_s("Enter lion's weight: %lf", &weight);
 		scanf_s("Enter lion's number of lives: %d", &numLives);
@@ -150,19 +155,18 @@ int main()
 		lionPtr->weight = weight;
 		lionPtr->numberOfLives = numLives;
 		lionPtr->age = age;
-		myAnimal = &lionPtr;
 		break; 
+
 	default:
 		break;
 	}
+
 	printf("\n");
-	((void(*)(struct Animal*))myAnimal->v_table[0])(&myAnimal);
-	printf("\nYour animal costs %.2lf per month.\n", \
-		((double(*)(struct Animal*))myAnimal->v_table[1])(&myAnimal));
+	printf("\nSpeak animal!");
+	((void(*)(struct Animal*))&myAnimal->v_table[0])(myAnimal);
+	double cost = 1.0;//((double(*)(struct Animal*))&myAnimal->v_table[1])(myAnimal);
+	printf("\nYour animal costs %.2lf per month.\n",cost);
 
-
-
-
+	free(myAnimal);
 	return 1;
-
 }
