@@ -5,27 +5,29 @@ typedef enum { ANIMAL, DOG, CAT, LION } selectedAnimal;
 //DECLARE STRUCTS
 struct Animal
 {
-	void (**v_table)();
+	void *((*v_table[2])());
+	//void(**v_table)();
 	int age;
 };
 
 struct Dog
 {
-	void (**v_table)();
+	void *((*v_table[2])());
+	//void(*v_table_dog[])();
 	int age;
 	double weight;
 };
 
 struct Cat
 {
-	void (**v_table)();
+	void *((*v_table[2])());
 	int age;
 	int numberOfLives;
 };
 
 struct Lion
 {
-	void (**v_table)();
+	void *((*v_table[2])());
 	int age;
 	int numberOfLives;
 	double weight;
@@ -75,7 +77,8 @@ int main()
 		break;
 
 	case DOG:
-		(struct Animal*) myAnimal = (struct Animal*)malloc(sizeof(struct Dog));
+		printf("The size being allocated is : %d",sizeof(struct Dog));
+		myAnimal = malloc(sizeof(struct Dog));
 		
 		if (myAnimal != NULL)
 		{
@@ -85,23 +88,23 @@ int main()
 			printf("Enter dog's age:");
 			scanf_s("%d", &age);
 
-			Construct_Dog(&myAnimal);
-			((struct Dog*)myAnimal)->weight = weight;
+			Construct_Dog(myAnimal);
 			((struct Dog*)myAnimal)->age = age;
+			((struct Dog*)myAnimal)->weight = weight;
 
 			printf("\n");
 			printf("\nSpeak animal!");
-			((void(*)(struct Animal*))&myAnimal->v_table[0])(myAnimal);
-			cost = ((double(*)(struct Animal*))&myAnimal->v_table[1])(myAnimal);
-			//(myAnimal->v_table[1])(myAnimal);
+			((void(*)(struct Animal*))myAnimal->v_table[0])(myAnimal);
+			cost = ((double(*)(struct Animal*))myAnimal->v_table[1])(myAnimal);
 			printf("\nYour animal costs %.2lf per month.\n", cost);
-
-			free(&myAnimal);
+			free(myAnimal);
+			
 		}
 		else
 		{
 			break;
 		}
+		
 		break;
 
 	case CAT:
@@ -113,14 +116,14 @@ int main()
 		printf("Enter cat's age: %d");
 		scanf_s("%d", &age);
 
-		Construct_Cat(&myAnimal);
+		Construct_Cat(myAnimal);
 		((struct Cat*)myAnimal)->numberOfLives = numLives;
 		((struct Cat*)myAnimal)->age = age;
 
 		printf("\n");
 		printf("\nSpeak animal!");
-		((void(*)(struct Animal*))&myAnimal->v_table[0])(myAnimal);
-		cost = ((double(*)(struct Animal*))&myAnimal->v_table[1])(myAnimal);
+		((void(*)(struct Animal*))myAnimal->v_table[0])(myAnimal);
+		cost = ((double(*)(struct Animal*))myAnimal->v_table[1])(myAnimal);
 		//(myAnimal->v_table[1])(myAnimal);
 		printf("\nYour animal costs %.2lf per month.\n", cost);
 
@@ -133,19 +136,19 @@ int main()
 		scanf_s("Enter lion's weight: %lf", &weight);
 		scanf_s("Enter lion's number of lives: %d", &numLives);
 		scanf_s("Enter lion's age: %d", &age);
-		Construct_Lion(&myAnimal);
+		Construct_Lion(myAnimal);
 		((struct Lion*)myAnimal)->weight = weight;
 		((struct Lion*)myAnimal)->numberOfLives = numLives;
 		((struct Lion*)myAnimal)->age = age;
 
 		printf("\n");
 		printf("\nSpeak animal!");
-		((void(*)(struct Animal*))&myAnimal->v_table[0])(myAnimal);
-		cost = ((double(*)(struct Animal*))&myAnimal->v_table[1])(myAnimal);
+		((void(*)(struct Animal*))myAnimal->v_table[0])(myAnimal);
+		cost = ((double(*)(struct Animal*))myAnimal->v_table[1])(myAnimal);
 		//(myAnimal->v_table[1])(myAnimal);
 		printf("\nYour animal costs %.2lf per month.\n", cost);
 
-		free(&myAnimal);
+		free(myAnimal);
 		break; 
 
 	default:
@@ -187,21 +190,26 @@ void (*v_table_lion[])() = { &Speak_Lion, &Get_Cost_Cat };
 
 void Construct_Dog(struct Animal *a)
 {
-	((struct Dog*)a)->v_table = v_table_dog;
+	((struct Dog*)a)->v_table[0] = v_table_dog[0];
+	((struct Dog*)a)->v_table[1] = v_table_dog[1];
 	((struct Dog*)a)->age = 0;
 	((struct Dog*)a)->weight = 0;
 };
 
 void Construct_Cat(struct Animal *a)
 {
-	((struct Cat*)a)->v_table = v_table_cat;
+	((struct Cat*)a)->v_table[0] = v_table_cat[0];
+	((struct Cat*)a)->v_table[1] = v_table_cat[1];
+	//((struct Cat*)a)->v_table = v_table_cat;
 	((struct Cat*)a)->age = 0;
 	((struct Cat*)a)->numberOfLives = 0;
 }
 
 void Construct_Lion(struct Animal *a)
 {
-	((struct Lion*)a)->v_table = v_table_cat;
+	((struct Lion*)a)->v_table[0] = v_table_lion[0];
+	((struct Lion*)a)->v_table[1] = v_table_lion[1];
+	//((struct Lion*)a)->v_table = v_table_cat;
 	((struct Lion*)a)->age = 0;
 	((struct Lion*)a)->numberOfLives = 0;
 	((struct Lion*)a)->weight = 0;
